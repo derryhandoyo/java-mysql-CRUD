@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1_subreport1" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="8be4caef-3ce6-4d06-b2b0-14a06c5701a7">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="sub_user_id" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+     user_addresses.`id` AS user_addresses_id,
+     user_addresses.`user_id` AS user_addresses_user_id,
+     user_addresses.`address` AS user_addresses_address
+FROM
+     `user_addresses` user_addresses
+where user_addresses.user_id = $P{sub_user_id}]]>
+	</queryString>
+	<field name="user_addresses_id" class="java.lang.Integer"/>
+	<field name="user_addresses_user_id" class="java.lang.Integer"/>
+	<field name="user_addresses_address" class="java.lang.String"/>
+	<title>
+		<band height="26">
+			<textField>
+				<reportElement x="0" y="0" width="100" height="20" uuid="ac17641b-5e0a-4a32-8530-baee7d2499db"/>
+				<textFieldExpression><![CDATA[$P{sub_user_id}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="146" y="0" width="100" height="20" uuid="b7c0f376-ea0a-432d-8b94-73fe2e5fcdae"/>
+				<text><![CDATA[user_addresses_address]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="256" y="0" width="100" height="20" uuid="30fb66a4-ca6c-48fd-93a8-f52c8dcb3970"/>
+				<textFieldExpression><![CDATA[$F{user_addresses_address}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="330" y="0" width="100" height="20" uuid="ec596779-e679-465d-bd2f-b4d50d1f6fed"/>
+				<text><![CDATA[user_addresses_user_id]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="443" y="0" width="100" height="20" uuid="8cd6f422-b25a-43d5-9b2f-7cfe8f8d5c3c"/>
+				<textFieldExpression><![CDATA[$F{user_addresses_user_id}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

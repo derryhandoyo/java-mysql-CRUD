@@ -5,15 +5,21 @@
  */
 package Mysql;
 
-import static Mysql.Global.conn;
 import java.awt.HeadlessException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.view.JasperViewer;
 
 /**
  *
@@ -42,7 +48,13 @@ public class ifrAddresses extends javax.swing.JInternalFrame {
         jTextField1 = new javax.swing.JTextField();
         btnInsert = new javax.swing.JButton();
         btnInsertPS = new javax.swing.JButton();
+        print = new javax.swing.JButton();
+        txt_id = new javax.swing.JTextField();
+        txt_username = new javax.swing.JTextField();
 
+        setClosable(true);
+        setIconifiable(true);
+        setMaximizable(true);
         addInternalFrameListener(new javax.swing.event.InternalFrameListener() {
             public void internalFrameActivated(javax.swing.event.InternalFrameEvent evt) {
             }
@@ -88,6 +100,22 @@ public class ifrAddresses extends javax.swing.JInternalFrame {
             }
         });
 
+        print.setText("print");
+        print.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                printActionPerformed(evt);
+            }
+        });
+
+        txt_id.setFocusable(false);
+        txt_id.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txt_idActionPerformed(evt);
+            }
+        });
+
+        txt_username.setFocusable(false);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -101,7 +129,13 @@ public class ifrAddresses extends javax.swing.JInternalFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(btnInsert)
                                 .addGap(42, 42, 42)
-                                .addComponent(btnInsertPS))))
+                                .addComponent(btnInsertPS)))
+                        .addGap(35, 35, 35)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(txt_id)
+                            .addComponent(txt_username, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(18, 18, 18)
+                        .addComponent(print))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 707, javax.swing.GroupLayout.PREFERRED_SIZE)))
@@ -110,46 +144,50 @@ public class ifrAddresses extends javax.swing.JInternalFrame {
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(print))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(btnInsert)
+                            .addComponent(btnInsertPS)))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(txt_id, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txt_username, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnInsert)
-                    .addComponent(btnInsertPS))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 438, Short.MAX_VALUE))
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 442, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnInsertActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertActionPerformed
-        // TODO add your handling code here:
-        try {
-            Global.connOpen(ifrAddresses.class.getName());
-            String sql = "insert into user_addresses (user_id, address) values ('" + Global.gb_userId + "','" + jTextField1.getText() + "')";
+        // TODO add your handling code here:        
+        try (java.sql.Connection conn = new cls_koneksi().getConnection("")) {
+            String sql = "insert into user_addresses (user_id, address) values ('" + Global.userId + "','" + jTextField1.getText() + "')";
             conn.createStatement().executeUpdate(sql);
-            conn.close();
-            load_table("");
         } catch (SQLException | HeadlessException e) {
             Logger.getLogger(frmLogin.class.getName()).log(Level.SEVERE, null, e);
         }
-
+        load_table("");
     }//GEN-LAST:event_btnInsertActionPerformed
 
     private void btnInsertPSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnInsertPSActionPerformed
         // TODO add your handling code here:
-        try {
-            Global.connOpen(ifrAddresses.class.getName());
+        try(java.sql.Connection conn = new cls_koneksi().getConnection("")) {            
             String sql = "insert into user_addresses (user_id, address) values (?,?)";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
-            preparedStatement.setInt(1, Global.gb_userId);
+            preparedStatement.setInt(1, Global.userId);
             preparedStatement.setString(2, jTextField1.getText());
-            preparedStatement.executeUpdate();
-            conn.close();
-            load_table("");
+            preparedStatement.executeUpdate();            
         } catch (SQLException | HeadlessException e) {
             Logger.getLogger(frmLogin.class.getName()).log(Level.SEVERE, null, e);
         }
+        load_table("");
     }//GEN-LAST:event_btnInsertPSActionPerformed
 
     private void internalFrameOpened(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_internalFrameOpened
@@ -157,9 +195,48 @@ public class ifrAddresses extends javax.swing.JInternalFrame {
         load_table("");
     }//GEN-LAST:event_internalFrameOpened
 
+    private void printActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_printActionPerformed
+        // TODO add your handling code here:               
+    }//GEN-LAST:event_printActionPerformed
+
+    private void txt_idActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txt_idActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txt_idActionPerformed
+
+    public void cetak() {
+        String sql = "SELECT * FROM users";
+        try (java.sql.Connection conn = new cls_koneksi().getConnection("")){
+            //test query
+//            ResultSet rs = conn.createStatement().executeQuery(sql);
+//            if (rs.next()){
+//                txt_id.setText(rs.getString("username"));
+//                txt_username.setText(rs.getString("password"));
+//                
+//            }
+//            conn.close();
+
+            //generate report
+            HashMap param = new HashMap();
+            param.put("id", txt_id.getText().isEmpty() ? null : Integer.parseInt(txt_id.getText()));
+            param.put("username", txt_username.getText().isEmpty() ? "" : txt_username.getText());
+            String jrxmlFile = "src/report/report1.jrxml";
+            JasperReport JRpt = JasperCompileManager.compileReport(jrxmlFile);
+
+            JasperPrint jp = JasperFillManager.fillReport(JRpt, param, conn);
+
+//            JasperPrint jp = JasperFillManager.fillReport(getClass().getResourceAsStream("report1.jasper"), param, conn);
+            JasperViewer.viewReport(jp, false);
+
+//        } catch (JRException ex) {
+        } catch (SQLException | JRException ex) {
+            Logger.getLogger(ifrAddresses.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
     /**
      * Populate addresses from database into table
-     * @param filter    use to filter what data are showed
+     *
+     * @param filter use to filter what data are showed
      */
     private void load_table(String filter) {
         DefaultTableModel model = new DefaultTableModel();
@@ -168,21 +245,19 @@ public class ifrAddresses extends javax.swing.JInternalFrame {
         model.addColumn("User ID");
         model.addColumn("Address");
 
-        try {
-            Global.connOpen(ifrAddresses.class.getName());
+        try (java.sql.Connection conn = new cls_koneksi().getConnection("")){            
             int no = 1;
             String sql = "select * from user_addresses";
             ResultSet rs = conn.createStatement().executeQuery(sql);
             while (rs.next()) {
                 model.addRow(new Object[]{
-                    no, 
-                    rs.getString(1), 
+                    no,
+                    rs.getString(1),
                     rs.getString(2),
                     rs.getString(3)});
                 no++;
             }
-            jTable1.setModel(model);
-            conn.close();
+            jTable1.setModel(model);            
         } catch (Exception e) {
             Logger.getLogger(ifrAddresses.class.getName()).log(Level.SEVERE, null, e);
         }
@@ -194,5 +269,8 @@ public class ifrAddresses extends javax.swing.JInternalFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     private javax.swing.JTextField jTextField1;
+    private javax.swing.JButton print;
+    private javax.swing.JTextField txt_id;
+    private javax.swing.JTextField txt_username;
     // End of variables declaration//GEN-END:variables
 }

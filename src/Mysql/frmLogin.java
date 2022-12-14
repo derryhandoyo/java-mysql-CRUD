@@ -5,7 +5,6 @@
  */
 package Mysql;
 
-import static Mysql.Global.conn;
 import java.awt.HeadlessException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -99,50 +98,42 @@ public class frmLogin extends javax.swing.JFrame {
 
     /**
      * Login button sample using prepared statement
-     * @param evt 
+     *
+     * @param evt
      */
     private void btn_loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_loginActionPerformed
         // TODO add your handling code here:
-        Global.connOpen(frmLogin.class.getName());
         try {
-            if (conn == null) {
-                JOptionPane.showMessageDialog(null, "Koneksi ke database gagal", "Error Message", JOptionPane.ERROR_MESSAGE);
+            char[] password = txt_password.getPassword();
+            String str_password = String.valueOf(password);
+            String username = txt_username.getText();
+            if (checkUserPS(username, str_password) != null) {
+                Global.userId = checkUserPS(username, str_password);
+                frmMain fu = new frmMain();
+                fu.setVisible(true);
+                this.dispose();
             } else {
-//                checkUserS(txt_username.getText(),String.valueOf(txt_password.getPassword()));
-                char[] password = txt_password.getPassword();
-                String str_password = String.valueOf(password);
-                String username = txt_username.getText();
-                if (checkUserPS(username, str_password) != null) {
-                    Global.gb_userId = checkUserPS(username, str_password);
-                    frmMain fu = new frmMain();
-                    fu.setVisible(true);
-                    this.dispose();
-                } else {
-                    JOptionPane.showMessageDialog(null, "Username dan Password ditolak Bro..!", "Error Message", JOptionPane.ERROR_MESSAGE);
-                }
+                JOptionPane.showMessageDialog(null, "Username dan Password ditolak Bro..!", "Error Message", JOptionPane.ERROR_MESSAGE);
             }
-            conn.close();
-        } catch (Exception e) {
+        } catch (HeadlessException e) {
             Logger.getLogger(frmLogin.class.getName()).log(Level.SEVERE, null, e);
         }
     }//GEN-LAST:event_btn_loginActionPerformed
 
     /**
      * Login button sample without prepared statement
-     * @param evt 
+     *
+     * @param evt
      */
     private void btn_login1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_login1ActionPerformed
         // TODO add your handling code here:
-        char[] password = txt_password.getPassword();
-        String str_password = String.valueOf(password);
-        String username = txt_username.getText();
         try {
-            Global.connOpen(frmLogin.class.getName());
+            char[] password = txt_password.getPassword();
+            String str_password = String.valueOf(password);
+            String username = txt_username.getText();
             checkUserS(username, str_password);
-
-            conn.close();
-        } catch (SQLException ex) {
-            Logger.getLogger(frmLogin.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (HeadlessException e) {
+            Logger.getLogger(frmLogin.class.getName()).log(Level.SEVERE, null, e);
         }
     }//GEN-LAST:event_btn_login1ActionPerformed
 
@@ -152,24 +143,6 @@ public class frmLogin extends javax.swing.JFrame {
      * @param username inputted username
      * @param password hashed password
      */
-    private void checkUserS(String username, String password) {
-        try {
-            String sql = "SELECT * FROM users WHERE username = '" + username + "' AND password = PASSWORD('" + password + "')";            
-            ResultSet rs = conn.createStatement().executeQuery(sql);
-            if (rs.next()) {
-                frmMain fu = new frmMain();
-                fu.setLocationRelativeTo(null);
-                fu.setVisible(true);
-                this.dispose();
-
-            } else {
-                JOptionPane.showMessageDialog(null, "Username dan Password ditolak Bro..!", "Error Message", JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (SQLException | HeadlessException e) {
-            Logger.getLogger(frmLogin.class.getName()).log(Level.SEVERE, null, e);
-        }
-    }
-
     /**
      * Function to check user credentials utilizing JDBC prepared statement
      *
@@ -178,24 +151,42 @@ public class frmLogin extends javax.swing.JFrame {
      * @return currently logged in user id or null if user doesn't exist
      */
     private Integer checkUserPS(String username, String password) {
-        try {
+        try (java.sql.Connection conn = new cls_koneksi().getConnection("")) {
             String sql = "SELECT * FROM users WHERE username = ? AND password = PASSWORD(?)";
             PreparedStatement preparedStatement = conn.prepareStatement(sql);
             preparedStatement.setString(1, username);
             preparedStatement.setString(2, password);
             ResultSet rs = preparedStatement.executeQuery();
-
             if (rs.next()) {
                 return Integer.parseInt(rs.getString("id"));
-
-            } else {
-                return null;
             }
-
         } catch (SQLException | HeadlessException e) {
             Logger.getLogger(frmLogin.class.getName()).log(Level.SEVERE, null, e);
         }
         return null;
+    }
+
+    /**
+     * Function to check user credentials utilizing JDBC statement
+     *
+     * @param username inputted username
+     * @param password hashed password
+     */
+    private void checkUserS(String username, String password) {
+        try (java.sql.Connection conn = new cls_koneksi().getConnection("")) {
+            String sql = "SELECT * FROM users WHERE username = '" + username + "' AND password = PASSWORD('" + password + "')";
+            ResultSet rs = conn.createStatement().executeQuery(sql);
+            if (rs.next()) {
+                frmMain fu = new frmMain();
+                fu.setLocationRelativeTo(null);
+                fu.setVisible(true);
+                this.dispose();
+            } else {
+                JOptionPane.showMessageDialog(null, "Username dan Password ditolak Bro..!", "Error Message", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (SQLException | HeadlessException e) {
+            Logger.getLogger(frmLogin.class.getName()).log(Level.SEVERE, null, e);
+        }
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
