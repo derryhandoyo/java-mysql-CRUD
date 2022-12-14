@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.20.0.final using JasperReports Library version 6.20.0-2bc7ab61c56f459e8176eb05c7705e145cd400ad  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="null" language="javascript" columnCount="4" printOrder="Horizontal" pageWidth="810" pageHeight="595" columnWidth="185" columnSpacing="15" leftMargin="10" rightMargin="0" topMargin="20" bottomMargin="20" uuid="1bc1d95d-f082-4007-8e60-0c51e966abf7">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="dbtes.jrdax"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<property name="com.jaspersoft.studio.data.sql.tables" value=""/>
+	<parameter name="id" class="java.lang.Integer"/>
+	<parameter name="username" class="java.lang.String">
+		<defaultValueExpression><![CDATA[""]]></defaultValueExpression>
+	</parameter>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["D:\\aplikasi\\tes\\src\\report\\"]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+*
+FROM
+  users
+where 
+   (users.id = $P{id} or $P{id} is null)
+and
+   users.username like '%$P!{username}%']]>
+	</queryString>
+	<field name="id" class="java.lang.Integer">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="username" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="password" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="role" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="image" class="java.io.InputStream">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<image>
+				<reportElement x="0" y="0" width="80" height="79" uuid="ff165f3b-f4d2-4c7b-a5c8-138a02aadffe"/>
+				<imageExpression><![CDATA["C:/Users/kmis/Pictures/fas.jpg"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<columnHeader>
+		<band height="17" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="129">
+			<componentElement>
+				<reportElement x="3" y="10" width="100" height="30" uuid="85999919-4ff9-4541-ba73-ae0a6136dee2"/>
+				<jr:Code39 xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<jr:codeExpression><![CDATA[$F{username}]]></jr:codeExpression>
+				</jr:Code39>
+			</componentElement>
+			<textField>
+				<reportElement x="3" y="70" width="130" height="30" uuid="08218306-3a50-4c1d-bc28-391f0e26df28">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="3b8aa916-bfee-457c-a210-0a06f7e3c4ff"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{password}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="0" y="120" width="184" height="1" uuid="99cb0a31-41a3-465a-aa51-6e74f926cba5"/>
+			</line>
+			<line>
+				<reportElement x="184" y="2" width="1" height="118" uuid="3643e208-bd38-4cf8-94c9-4f05d599e511"/>
+			</line>
+			<textField>
+				<reportElement x="3" y="50" width="100" height="20" uuid="cfb45341-5195-4f62-b924-27ecb4e67b4b"/>
+				<textFieldExpression><![CDATA[""+$F{image}]]></textFieldExpression>
+			</textField>
+			<image isUsingCache="false">
+				<reportElement x="120" y="10" width="50" height="50" uuid="86db83ac-0c75-4aba-80a7-aef83957e516"/>
+				<imageExpression><![CDATA[$F{image}]]></imageExpression>
+			</image>
+		</band>
+	</detail>
+</jasperReport>
